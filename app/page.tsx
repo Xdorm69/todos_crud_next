@@ -1,103 +1,70 @@
-import Image from "next/image";
+"use client";
+import { useTodos } from "@/store/todos";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const router = useRouter();
+  const todos = useTodos((state) => state.todos);
+  const setTodos = useTodos((state) => state.setTodos);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleUpdate = (id: number) => {
+    router.push(`/update-todos/${id}`);
+  }
+
+  const handleDelete = (id: number)  => {
+    const fetchedTodos = [...todos];
+    const filteredTodos = fetchedTodos.filter((todo) => todo.id !== id)
+    setTodos(filteredTodos);
+  }
+
+  return (
+    <main className="py-10 min-h-screen">
+      <div className="container mx-auto">
+        <div className="flex items-center justify-between">
+          <h1 className="font-bold text-5xl text-gray-600">Todos</h1>
+          <Link href="/add-todos">
+            <button className="bg-green-600 cursor-pointer hover:bg-green-300 transition p-2 rounded-xl shadow text-white text-2xl font-bold">
+              Add todos
+            </button>
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <div className="bg-gray-200 rounded-xl w-full my-5 shadow p-2">
+          {todos && todos.length > 0 ? (
+            todos.map((todo) => (
+              <div
+                key={todo.id}
+                className="bg-blue-200 rounded-xl p-4 shadow w-full my-3"
+              >
+                  <p>#{todo.id}</p>
+                <div className="flex items-center justify-between">
+                  <h1 className="font-bold text-2xl">{todo.title}</h1>
+                  <div className="actions">
+                    <button
+                      onClick={() => handleUpdate(todo.id)}
+                      className="bg-green-400 hover:bg-green-600 transition p-2 shadow rounded-xl text-white font-semibold"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelete(todo.id)}
+                      className="bg-red-400 hover:bg-red-600 transition p-2 shadow ml-2 rounded-xl text-white font-semibold"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <p>{todo.desc} </p>
+              </div>
+            ))
+          ) : (
+            <div className="py-10 font-semibold tracking-tight">
+              No todos available
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
   );
 }
