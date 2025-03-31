@@ -2,6 +2,7 @@
 import { useTodos } from "@/store/todos";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter();
@@ -16,7 +17,8 @@ export default function Home() {
     const fetchedTodos = [...todos];
     const filteredTodos = fetchedTodos.filter((todo) => todo.id !== id)
     setTodos(filteredTodos);
-  }
+    toast.success("Todo deleted successfully");
+   }
 
   return (
     <main className="py-10 min-h-screen">

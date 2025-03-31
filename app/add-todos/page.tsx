@@ -14,6 +14,14 @@ const TodoPage = () => {
   const submitTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log({ title, desc });
+    if(title == ''){
+      toast.error("Title cannot be empty");
+      return
+    }
+    else if(desc == ''){
+      toast.error("Desc cannot be empty");
+      return;
+    }
 
     // Create new todo with unique ID
     const newTodo = {
